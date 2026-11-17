@@ -119,7 +119,7 @@ function App() {
 
     try {
       const { data, error } = await supabase.functions.invoke(
-        'luma-chat',
+        'Luma-chat',
         {
           body: {
             message: text,
