@@ -7,6 +7,8 @@ import {
   Moon, Star
 } from 'lucide-react';
 
+import LumaOrb from './components/LumaOrb';
+
 type Tab = 'home' | 'voice' | 'chats' | 'streaks' | 'support' | 'profile';
 
 const navigation = [
@@ -17,51 +19,6 @@ const navigation = [
   { id: 'support', label: 'Помощь', icon: LifeBuoy },
   { id: 'profile', label: 'Профиль', icon: UserRound },
 ] as const;
-
-function Orb({
-  small = false,
-  active = false,
-  onClick
-}: {
-  small?: boolean;
-  active?: boolean;
-  onClick?: () => void;
-}) {
-  return (
-    <div
-      className={`orb-wrap ${small ? 'orb-small' : ''} ${active ? 'orb-active' : ''}`}
-      onClick={onClick}
-      role={onClick ? 'button' : undefined}
-      tabIndex={onClick ? 0 : undefined}
-      onKeyDown={onClick ? (e) => {
-        if (e.key === 'Enter' || e.key === ' ') onClick();
-      } : undefined}
-      aria-label={onClick ? 'Активировать Luma' : undefined}
-    >
-      <div className="orb-halo" />
-
-      <div className="orb">
-        <div className="orb-liquid orb-liquid-one" />
-        <div className="orb-liquid orb-liquid-two" />
-        <div className="orb-liquid orb-liquid-three" />
-        <div className="orb-light" />
-        <div className="orb-core" />
-        <div className="orb-shine" />
-        <div className="orb-glass-reflection" />
-        <div className="orb-particles" />
-      </div>
-
-      <div className="orb-base-light" />
-      <div className="orb-pedestal">
-        <div className="pedestal-top" />
-        <div className="pedestal-neck" />
-        <div className="pedestal-body" />
-        <div className="pedestal-bottom" />
-        <div className="pedestal-glow" />
-      </div>
-    </div>
-  );
-}
 
 function App() {
   const [tab, setTab] = useState<Tab>('home');
@@ -113,7 +70,7 @@ function App() {
                 LUMA · ТВОЙ ПОМОЩНИК
               </div>
 
-              <Orb
+              <LumaOrb
                 active={orbActive}
                 onClick={() => setOrbActive((value) => !value)}
               />
@@ -157,7 +114,7 @@ function App() {
             <p className="muted">Luma всегда готова тебя выслушать.</p>
 
             <div className="voice-orb-area">
-              <Orb
+              <LumaOrb
                 active={orbActive}
                 onClick={() => setOrbActive((value) => !value)}
               />
