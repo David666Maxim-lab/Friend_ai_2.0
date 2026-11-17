@@ -1,19 +1,10 @@
+
 import { useState } from 'react';
 import {
-  AudioLines,
-  Bot,
-  Crown,
-  Flame,
-  Heart,
-  Home,
-  LifeBuoy,
-  MessageCircle,
-  Mic,
-  Plus,
-  Send,
-  Settings,
-  Sparkles,
-  UserRound,
+  AudioLines, Bot, Crown, Flame, Heart, Home, LifeBuoy,
+  MessageCircle, Mic, Plus, Send, Settings, Sparkles,
+  UserRound, ChevronRight, Zap, ShieldCheck, Globe,
+  Headphones, X, Menu, Moon, Star
 } from 'lucide-react';
 
 type Tab = 'home' | 'voice' | 'chats' | 'streaks' | 'support' | 'profile';
@@ -23,190 +14,216 @@ const navigation = [
   { id: 'voice', label: 'Голос', icon: AudioLines },
   { id: 'chats', label: 'Чаты', icon: MessageCircle },
   { id: 'streaks', label: 'Серии', icon: Flame },
-  { id: 'support', label: 'Поддержка', icon: LifeBuoy },
+  { id: 'support', label: 'Помощь', icon: LifeBuoy },
   { id: 'profile', label: 'Профиль', icon: UserRound },
 ] as const;
 
-export default function App() {
-  const [tab, setTab] = useState<Tab>('home');
-
+function Orb({ small = false }: { small?: boolean }) {
   return (
-    <div className="min-h-screen bg-[#080b16] text-white">
-      <div className="mx-auto min-h-screen max-w-md pb-28">
-        <header className="flex items-center justify-between px-6 pt-7">
-          <div className="flex items-center gap-3">
-            <div className="flex h-11 w-11 items-center justify-center rounded-2xl bg-gradient-to-br from-cyan-400 to-violet-600">
-              <Heart size={22} />
-            </div>
-            <div>
-              <h1 className="text-xl font-bold">Friend AI</h1>
-              <p className="text-xs text-slate-500">Твой мир общения</p>
-            </div>
-          </div>
-          <button onClick={() => setTab('profile')} className="rounded-full border border-white/10 bg-white/5 p-3">
-            <Settings size={19} />
-          </button>
-        </header>
-
-        <main className="px-6 pt-9">
-          {tab === 'home' && (
-            <div className="space-y-7">
-              <section>
-                <p className="text-sm text-cyan-300">Твоё пространство</p>
-                <h2 className="mt-2 text-3xl font-bold">
-                  Рад тебя видеть.
-                  <br />
-                  <span className="text-slate-400">Я рядом.</span>
-                </h2>
-              </section>
-
-              <section className="relative overflow-hidden rounded-3xl border border-cyan-400/20 bg-gradient-to-br from-[#14243b] via-[#11172d] to-[#24153b] p-6">
-                <div className="relative">
-                  <div className="flex items-center gap-2 text-cyan-300">
-                    <Sparkles size={17} />
-                    <span className="text-xs font-semibold uppercase tracking-widest">Твой ИИ-помощник</span>
-                  </div>
-                  <h3 className="mt-5 text-2xl font-bold">Есть о чём поговорить?</h3>
-                  <p className="mt-2 text-sm leading-6 text-slate-300">
-                    Задавай вопросы, делись мыслями или просто поговори.
-                  </p>
-                  <button onClick={() => setTab('chats')} className="mt-6 flex items-center gap-2 rounded-xl bg-cyan-400 px-5 py-3 text-sm font-bold text-slate-950">
-                    Начать общение <Send size={16} />
-                  </button>
-                </div>
-                <Bot className="absolute -bottom-8 -right-4 text-cyan-300/10" size={150} />
-              </section>
-
-              <section>
-                <div className="mb-4 flex items-center justify-between">
-                  <h3 className="text-lg font-bold">Твои возможности</h3>
-                  <span className="text-xs text-slate-500">Friend AI 2.0</span>
-                </div>
-                <div className="grid grid-cols-2 gap-3">
-                  <button onClick={() => setTab('voice')} className="rounded-2xl border border-white/10 bg-white/[0.04] p-4 text-left">
-                    <AudioLines className="text-cyan-300" size={25} />
-                    <p className="mt-4 font-semibold">Голосовой ИИ</p>
-                    <p className="mt-1 text-xs text-slate-500">Общайся голосом</p>
-                  </button>
-                  <button onClick={() => setTab('chats')} className="rounded-2xl border border-white/10 bg-white/[0.04] p-4 text-left">
-                    <MessageCircle className="text-violet-300" size={25} />
-                    <p className="mt-4 font-semibold">Мои чаты</p>
-                    <p className="mt-1 text-xs text-slate-500">Твои разговоры</p>
-                  </button>
-                  <button onClick={() => setTab('streaks')} className="rounded-2xl border border-white/10 bg-white/[0.04] p-4 text-left">
-                    <Flame className="text-orange-400" size={25} />
-                    <p className="mt-4 font-semibold">Серии дружбы</p>
-                    <p className="mt-1 text-xs text-slate-500">Будь ближе к друзьям</p>
-                  </button>
-                  <button onClick={() => setTab('support')} className="rounded-2xl border border-white/10 bg-white/[0.04] p-4 text-left">
-                    <LifeBuoy className="text-emerald-300" size={25} />
-                    <p className="mt-4 font-semibold">Поддержка</p>
-                    <p className="mt-1 text-xs text-slate-500">Мы готовы помочь</p>
-                  </button>
-                </div>
-              </section>
-
-              <button className="flex w-full items-center justify-between rounded-2xl border border-amber-300/20 bg-amber-300/[0.06] p-4 text-left">
-                <div className="flex items-center gap-3">
-                  <Crown className="text-amber-300" size={25} />
-                  <div>
-                    <p className="font-semibold">Friend AI Premium</p>
-                    <p className="text-xs text-slate-400">Больше возможностей</p>
-                  </div>
-                </div>
-                <span className="text-amber-300">→</span>
-              </button>
-            </div>
-          )}
-
-          {tab === 'voice' && (
-            <section className="flex min-h-[65vh] flex-col items-center justify-center text-center">
-              <AudioLines className="text-cyan-300" size={25} />
-              <h2 className="mt-4 text-2xl font-bold">Голосовой ИИ</h2>
-              <div className="my-12 flex h-52 w-52 items-center justify-center rounded-full bg-gradient-to-br from-cyan-400/30 via-blue-500/20 to-violet-600/30">
-                <div className="flex h-36 w-36 items-center justify-center rounded-full border border-cyan-300/30 bg-gradient-to-br from-cyan-400 to-violet-600">
-                  <Mic size={48} />
-                </div>
-              </div>
-              <p className="text-slate-300">Твой голосовой помощник</p>
-              <p className="mt-2 text-xs text-slate-500">Голосовое подключение появится после интеграции ИИ.</p>
-            </section>
-          )}
-
-          {tab === 'chats' && (
-            <section>
-              <h2 className="text-2xl font-bold">Мои чаты</h2>
-              <p className="mt-2 text-sm text-slate-400">Все твои разговоры в одном месте.</p>
-              <div className="mt-8 rounded-3xl border border-white/10 bg-white/[0.04] p-7 text-center">
-                <MessageCircle className="mx-auto text-cyan-300" size={38} />
-                <p className="mt-4 font-semibold">Пока здесь пусто</p>
-                <p className="mt-2 text-sm text-slate-500">Создай свой первый разговор с ИИ.</p>
-                <button className="mt-5 rounded-xl bg-cyan-400 px-5 py-3 text-sm font-bold text-slate-950">
-                  <Plus className="mr-2 inline" size={16} /> Новый чат
-                </button>
-              </div>
-            </section>
-          )}
-
-          {tab === 'streaks' && (
-            <section>
-              <h2 className="text-2xl font-bold">Серии дружбы</h2>
-              <p className="mt-2 text-sm text-slate-400">Поддерживайте связь каждый день.</p>
-              <div className="mt-8 rounded-3xl border border-orange-400/20 bg-orange-400/[0.06] p-7 text-center">
-                <Flame className="mx-auto text-orange-400" size={48} />
-                <p className="mt-4 text-xl font-bold">Дружба начинается здесь</p>
-                <p className="mt-2 text-sm text-slate-400">Добавь друга, чтобы начать общую серию.</p>
-                <button className="mt-5 rounded-xl bg-orange-400 px-5 py-3 text-sm font-bold text-slate-950">
-                  <Plus className="mr-2 inline" size={16} /> Добавить друга
-                </button>
-              </div>
-            </section>
-          )}
-
-          {tab === 'support' && (
-            <section>
-              <h2 className="text-2xl font-bold">Поддержка</h2>
-              <p className="mt-2 text-sm text-slate-400">Помощь, общение и обратная связь.</p>
-              <div className="mt-7 space-y-3">
-                {['Частые вопросы', 'Техническая поддержка', 'Связаться с создателем', 'Конфиденциальность и безопасность'].map((item) => (
-                  <button key={item} className="w-full rounded-2xl border border-white/10 bg-white/[0.04] p-4 text-left font-medium">
-                    {item}
-                  </button>
-                ))}
-              </div>
-            </section>
-          )}
-
-          {tab === 'profile' && (
-            <section>
-              <h2 className="text-2xl font-bold">Профиль</h2>
-              <p className="mt-2 text-sm text-slate-400">Твой аккаунт Friend AI.</p>
-              <div className="mt-7 rounded-2xl border border-white/10 bg-white/[0.04] p-5">
-                <UserRound className="text-cyan-300" size={32} />
-                <p className="mt-4 font-semibold">Мой профиль</p>
-                <p className="mt-1 text-sm text-slate-500">
-                  Настройки аккаунта появятся после подключения авторизации.
-                </p>
-              </div>
-            </section>
-          )}
-        </main>
-
-        <nav className="fixed bottom-0 left-1/2 z-50 grid w-full max-w-md -translate-x-1/2 grid-cols-6 border-t border-white/10 bg-[#0b1020]/95 px-1 pb-5 pt-3 backdrop-blur-xl">
-          {navigation.map(({ id, label, icon: Icon }) => (
-            <button
-              key={id}
-              onClick={() => setTab(id)}
-              className={`flex flex-col items-center gap-1 ${
-                tab === id ? 'text-cyan-300' : 'text-slate-500'
-              }`}
-            >
-              <Icon size={19} />
-              <span className="text-[9px]">{label}</span>
-            </button>
-          ))}
-        </nav>
+    <div className={`orb-wrap ${small ? 'orb-small' : ''}`}>
+      <div className="orb-halo" />
+      <div className="orb">
+        <div className="orb-light" />
+        <div className="orb-core" />
+        <div className="orb-shine" />
       </div>
+      <div className="orb-ring" />
     </div>
   );
 }
+
+function App() {
+  const [tab, setTab] = useState<Tab>('home');
+  const [message, setMessage] = useState('');
+  const [messages, setMessages] = useState<string[]>([]);
+  const [showMenu, setShowMenu] = useState(false);
+
+  const sendMessage = () => {
+    if (!message.trim()) return;
+    setMessages((old) => [...old, message.trim()]);
+    setMessage('');
+  };
+
+  return (
+    <div className="app-shell">
+      <div className="ambient ambient-one" />
+      <div className="ambient ambient-two" />
+
+      <header className="topbar">
+        <button className="brand" onClick={() => setTab('home')}>
+          <div className="brand-icon"><Heart size={20} fill="currentColor" /></div>
+          <div>
+            <div className="brand-name">Friend AI<span>2.0</span></div>
+            <div className="brand-subtitle">ТВОЁ ПРОСТРАНСТВО</div>
+          </div>
+        </button>
+        <button className="icon-button" onClick={() => setTab('profile')}>
+          <Settings size={20} />
+        </button>
+      </header>
+
+      <main className="main-content">
+        {tab === 'home' && (
+          <div className="page">
+            <div className="welcome-row">
+              <div>
+                <div className="eyebrow"><Sparkles size={14} /> ТВОЙ ИИ-ДРУГ</div>
+                <h1>Рад тебя<br /><span>видеть.</span></h1>
+                <p className="muted">Здесь всегда есть место для тебя.</p>
+              </div>
+              <div className="avatar-orb"><Orb small /></div>
+            </div>
+
+            <section className="hero-card">
+              <div className="hero-top">
+                <span className="status-pill"><span className="status-dot" /> ONLINE</span>
+                <Sparkles size={19} className="purple-text" />
+              </div>
+              <Orb />
+              <div className="hero-copy">
+                <div className="eyebrow">ТВОЙ ЛИЧНЫЙ ПОМОЩНИК</div>
+                <h2>Я рядом.<br /><span>О чём поговорим?</span></h2>
+                <p>Мысли, идеи, вопросы или просто разговор по душам.</p>
+                <button className="primary-button" onClick={() => setTab('chats')}>
+                  Начать разговор <Send size={16} />
+                </button>
+              </div>
+            </section>
+
+            <div className="section-heading">
+              <div><div className="eyebrow">ВОЗМОЖНОСТИ</div><h2>Твоё пространство</h2></div>
+              <span className="subtle">6 разделов</span>
+            </div>
+
+            <div className="feature-grid">
+              <button className="feature-card" onClick={() => setTab('voice')}>
+                <div className="feature-icon violet"><AudioLines /></div>
+                <strong>Голосовой ИИ</strong><span>Живое общение</span>
+                <ChevronRight className="feature-arrow" size={17} />
+              </button>
+              <button className="feature-card" onClick={() => setTab('chats')}>
+                <div className="feature-icon blue"><MessageCircle /></div>
+                <strong>Мои чаты</strong><span>История разговоров</span>
+                <ChevronRight className="feature-arrow" size={17} />
+              </button>
+              <button className="feature-card" onClick={() => setTab('streaks')}>
+                <div className="feature-icon orange"><Flame /></div>
+                <strong>Серии дружбы</strong><span>Будь на связи</span>
+                <ChevronRight className="feature-arrow" size={17} />
+              </button>
+              <button className="feature-card" onClick={() => setTab('support')}>
+                <div className="feature-icon green"><LifeBuoy /></div>
+                <strong>Поддержка</strong><span>Мы поможем</span>
+                <ChevronRight className="feature-arrow" size={17} />
+              </button>
+            </div>
+
+            <button className="premium-card" onClick={() => setTab('profile')}>
+              <div className="premium-icon"><Crown size={24} /></div>
+              <div><strong>Friend AI Premium</strong><span>Больше возможностей для тебя</span></div>
+              <ChevronRight size={20} />
+            </button>
+          </div>
+        )}
+
+        {tab === 'voice' && (
+          <div className="page voice-page">
+            <div className="eyebrow"><AudioLines size={14} /> ГОЛОСОВОЕ ОБЩЕНИЕ</div>
+            <h1>Поговорим<br /><span>голосом?</span></h1>
+            <p className="muted">Твой ИИ-друг всегда готов тебя выслушать.</p>
+            <div className="voice-orb-area"><Orb /></div>
+            <div className="voice-status"><span className="status-dot" /> ОЖИДАНИЕ ПОДКЛЮЧЕНИЯ</div>
+            <button className="primary-button wide" disabled>
+              <Mic size={18} /> Голос скоро появится
+            </button>
+            <p className="hint">Голосовой режим станет доступен после подключения сервера ИИ.</p>
+          </div>
+        )}
+
+        {tab === 'chats' && (
+          <div className="page">
+            <div className="eyebrow"><MessageCircle size={14} /> ОБЩЕНИЕ</div>
+            <h1>Мои <span>чаты</span></h1>
+            <p className="muted">Твоё личное пространство для разговоров.</p>
+            <div className="chat-card">
+              <div className="chat-heading"><div className="chat-avatar"><Bot /></div><div><strong>Friend AI</strong><span><i className="status-dot" /> Твой ИИ-помощник</span></div><span className="mini-badge">AI</span></div>
+              <div className="chat-messages">
+                <div className="ai-message">Привет! Рад тебя видеть. О чём поговорим сегодня?</div>
+                {messages.map((item, i) => <div className="user-message" key={i}>{item}</div>)}
+              </div>
+              <div className="chat-input">
+                <input value={message} onChange={(e) => setMessage(e.target.value)} onKeyDown={(e) => e.key === 'Enter' && sendMessage()} placeholder="Напиши сообщение..." />
+                <button onClick={sendMessage}><Send size={18} /></button>
+              </div>
+              <p className="hint">Пока сообщения отображаются локально. Для ответов ИИ нужна серверная интеграция.</p>
+            </div>
+          </div>
+        )}
+
+        {tab === 'streaks' && (
+          <div className="page">
+            <div className="eyebrow"><Flame size={14} /> ДРУЖБА КАЖДЫЙ ДЕНЬ</div>
+            <h1>Серии <span>дружбы</span></h1>
+            <p className="muted">Маленькие моменты создают большую дружбу.</p>
+            <div className="streak-card">
+              <div className="streak-glow" />
+              <Flame className="streak-flame" size={68} fill="currentColor" />
+              <div className="streak-number">0</div>
+              <div className="streak-label">ДНЕЙ ДРУЖБЫ</div>
+              <div className="streak-divider" />
+              <p>Твоя первая серия начинается с одного сообщения.</p>
+              <button className="primary-button" onClick={() => setTab('chats')}><Plus size={17} /> Начать общение</button>
+            </div>
+            <div className="info-card"><Star className="orange-text" /><div><strong>Как работают серии?</strong><p>Общайтесь с друзьями каждый день, чтобы сохранять огонёк вашей дружбы.</p></div></div>
+          </div>
+        )}
+
+        {tab === 'support' && (
+          <div className="page">
+            <div className="eyebrow"><LifeBuoy size={14} /> МЫ РЯДОМ</div>
+            <h1>Чем <span>помочь?</span></h1>
+            <p className="muted">Выбери, с чем мы можем помочь.</p>
+            <div className="support-list">
+              <button className="support-item"><div className="feature-icon violet"><MessageCircle /></div><div><strong>Частые вопросы</strong><span>Ответы о Friend AI</span></div><ChevronRight /></button>
+              <button className="support-item"><div className="feature-icon blue"><Settings /></div><div><strong>Техническая поддержка</strong><span>Ошибки и проблемы приложения</span></div><ChevronRight /></button>
+              <button className="support-item"><div className="feature-icon orange"><Heart /></div><div><strong>Связаться с создателем</strong><span>Личное обращение, совет или разговор</span></div><ChevronRight /></button>
+              <button className="support-item"><div className="feature-icon green"><ShieldCheck /></div><div><strong>Безопасность</strong><span>Конфиденциальность и данные</span></div><ChevronRight /></button>
+            </div>
+            <div className="notice-card"><Heart size={20} /><p>Личное обращение направляется создателю приложения. Это не ИИ-служба и не экстренная психологическая помощь. Ответ может занять время.</p></div>
+          </div>
+        )}
+
+        {tab === 'profile' && (
+          <div className="page">
+            <div className="eyebrow"><UserRound size={14} /> ТВОЙ АККАУНТ</div>
+            <h1>Мой <span>профиль</span></h1>
+            <div className="profile-card">
+              <div className="profile-avatar"><UserRound size={38} /></div>
+              <h2>Друг Friend AI</h2>
+              <span className="subtle">Гость · Telegram подключение ожидается</span>
+              <div className="profile-stats"><div><strong>0</strong><span>Чатов</span></div><div><strong>0</strong><span>Серий</span></div><div><strong>Free</strong><span>План</span></div></div>
+            </div>
+            <div className="section-heading"><h2>Настройки</h2></div>
+            <div className="support-list">
+              <button className="support-item"><div className="feature-icon violet"><Globe /></div><div><strong>Язык</strong><span>Русский</span></div><ChevronRight /></button>
+              <button className="support-item"><div className="feature-icon blue"><Moon /></div><div><strong>Оформление</strong><span>Тёмная тема</span></div><ChevronRight /></button>
+              <button className="support-item"><div className="feature-icon orange"><Crown /></div><div><strong>Friend AI Premium</strong><span>Расширенные возможности</span></div><ChevronRight /></button>
+              <button className="support-item"><div className="feature-icon green"><ShieldCheck /></div><div><strong>Конфиденциальность</strong><span>Управление данными</span></div><ChevronRight /></button>
+            </div>
+          </div>
+        )}
+      </main>
+
+      <nav className="bottom-nav">
+        {navigation.map(({ id, label, icon: Icon }) => (
+          <button key={id} className={`nav-item ${tab === id ? 'active' : ''}`} onClick={() => setTab(id)}>
+            <span className="nav-icon"><Icon size={20} /></span>
+            <span>{label}</span>
+          </button>
+        ))}
+      </nav>
+    </div>
+  );
+}
+
+export default App;
