@@ -218,422 +218,239 @@ h1 span, h2 span { color: #bd91ff; }
 }
 
 
-/* LUMA — ЖИДКОЕ ГОЛОГРАФИЧЕСКОЕ СТЕКЛО */
+/* LUMA — 3D HOLOGRAPHIC OPAL */
 
-.orb-wrap {
-  position: relative;
-  display: block;
-  width: 280px;
-  height: 325px;
-  margin: 8px auto 0;
+.home-luma {
   isolation: isolate;
+  overflow: hidden;
+  background:
+    radial-gradient(ellipse at 50% 48%, rgba(126, 83, 255, .16), transparent 52%),
+    radial-gradient(ellipse at 50% 75%, rgba(50, 178, 255, .08), transparent 65%);
+}
+
+.home-luma::before,
+.voice-orb-area::before {
+  content: "";
+  position: absolute;
+  z-index: -1;
+  inset: 8% -20%;
+  pointer-events: none;
+  opacity: .7;
+  filter: blur(32px);
+  background:
+    radial-gradient(ellipse at 25% 35%, rgba(42, 205, 194, .18), transparent 35%),
+    radial-gradient(ellipse at 70% 28%, rgba(126, 79, 255, .2), transparent 38%),
+    radial-gradient(ellipse at 55% 68%, rgba(49, 115, 255, .16), transparent 42%);
+  animation: aurora-drift 12s ease-in-out infinite alternate;
+}
+
+.home-luma::after {
+  content: "";
+  position: absolute;
+  z-index: -1;
+  top: 15%;
+  left: 50%;
+  width: 230px;
+  height: 230px;
+  transform: translateX(-50%);
+  border-radius: 50%;
+  background: rgba(153, 99, 255, .13);
+  filter: blur(85px);
+  pointer-events: none;
+  animation: aurora-pulse 6s ease-in-out infinite alternate;
+}
+
+@keyframes aurora-drift {
+  0% {
+    transform: translate3d(-3%, 2%, 0) rotate(-4deg) scale(1);
+  }
+  100% {
+    transform: translate3d(4%, -3%, 0) rotate(5deg) scale(1.12);
+  }
+}
+
+@keyframes aurora-pulse {
+  from { opacity: .35; scale: .85; }
+  to { opacity: .85; scale: 1.2; }
+}
+
+/* Контейнер 3D-сферы */
+
+.luma-orb {
+  position: relative;
+  isolation: isolate;
+  width: min(280px, 78vw);
+  height: 280px;
+  margin: 12px auto 0;
+  flex-shrink: 0;
   cursor: pointer;
   -webkit-tap-highlight-color: transparent;
+  touch-action: manipulation;
+  outline: none;
+  transition: filter .4s ease;
 }
 
-.orb-halo {
+.luma-orb canvas {
+  position: relative;
+  z-index: 2;
+  display: block;
+  width: 100% !important;
+  height: 100% !important;
+  outline: none;
+}
+
+.luma-orb:focus-visible {
+  filter: drop-shadow(0 0 14px rgba(174, 133, 255, .8));
+}
+
+/* Перламутровое свечение */
+
+.luma-aura {
   position: absolute;
-  top: 32px;
+  z-index: 0;
+  top: 50%;
   left: 50%;
-  width: 190px;
-  height: 190px;
-  transform: translateX(-50%);
-  border-radius: 50%;
-  background: #9855ff;
-  filter: blur(65px);
-  opacity: .32;
-  animation: halo-breathe 5s ease-in-out infinite alternate;
-  transition: opacity .5s, filter .5s;
-}
-
-/* Основная стеклянная оболочка */
-
-.orb {
-  position: absolute;
-  z-index: 3;
-  top: 23px;
-  left: 50%;
-  width: 178px;
-  height: 178px;
-  overflow: hidden;
-  transform: translateX(-50%);
-  border: 1px solid rgba(235,220,255,.72);
-  border-radius: 50%;
-
-  background:
-    radial-gradient(ellipse at 28% 18%,
-      rgba(255,255,255,.95) 0%,
-      rgba(255,255,255,.28) 4%,
-      transparent 18%),
-    radial-gradient(ellipse at 75% 80%,
-      rgba(62,35,143,.85),
-      transparent 48%),
-    radial-gradient(ellipse at 35% 65%,
-      rgba(124,82,255,.62),
-      transparent 58%),
-    radial-gradient(circle at 50% 45%,
-      rgba(196,158,255,.42),
-      rgba(75,42,145,.22) 65%,
-      rgba(20,13,39,.72));
-
-  box-shadow:
-    inset 10px 9px 22px rgba(255,255,255,.32),
-    inset -15px -18px 30px rgba(8,4,24,.65),
-    inset 0 0 20px rgba(201,165,255,.25),
-    0 0 20px rgba(177,126,255,.38),
-    0 0 55px rgba(128,77,255,.28);
-
-  backdrop-filter: blur(3px);
-  animation: orb-breathe 6s ease-in-out infinite;
-  transition: box-shadow .5s, filter .5s;
-}
-
-/* Внутренние жидкие слои */
-
-.orb-liquid {
-  position: absolute;
-  border-radius: 45% 55% 58% 42% / 48% 42% 58% 52%;
-  filter: blur(8px);
-  mix-blend-mode: screen;
-  pointer-events: none;
-}
-
-.orb-liquid-one {
-  top: 17%;
-  left: 9%;
   width: 78%;
-  height: 64%;
+  height: 78%;
+  transform: translate(-50%, -50%);
+  border-radius: 50%;
   background:
-    radial-gradient(ellipse at 30% 35%,
-      rgba(244,219,255,.95),
-      rgba(173,112,255,.7) 25%,
-      rgba(112,61,220,.2) 60%,
-      transparent 75%);
-  animation: liquid-flow-one 8s ease-in-out infinite alternate;
+    radial-gradient(circle, rgba(157, 100, 255, .3), transparent 68%);
+  filter: blur(35px);
+  opacity: .75;
+  pointer-events: none;
+  animation: luma-aura-breathe 5s ease-in-out infinite alternate;
 }
 
-.orb-liquid-two {
-  right: -12%;
-  bottom: 2%;
-  width: 78%;
-  height: 70%;
+.luma-aura-two {
+  width: 95%;
+  height: 65%;
   background:
-    radial-gradient(ellipse at 35% 40%,
-      rgba(100,190,255,.75),
-      rgba(94,89,255,.48) 38%,
-      transparent 72%);
-  animation: liquid-flow-two 10s ease-in-out infinite alternate;
+    radial-gradient(ellipse, rgba(60, 210, 225, .19), transparent 70%);
+  filter: blur(40px);
+  animation: luma-aura-shift 8s ease-in-out infinite alternate;
 }
 
-.orb-liquid-three {
-  top: 38%;
-  left: 17%;
-  width: 72%;
-  height: 48%;
-  background:
-    radial-gradient(ellipse,
-      rgba(215,160,255,.65),
-      rgba(131,75,255,.2) 50%,
-      transparent 75%);
-  animation: liquid-flow-three 7s ease-in-out infinite alternate;
+@keyframes luma-aura-breathe {
+  from {
+    opacity: .4;
+    transform: translate(-50%, -50%) scale(.85);
+  }
+  to {
+    opacity: .9;
+    transform: translate(-50%, -50%) scale(1.12);
+  }
 }
 
-/* Свет внутри */
+@keyframes luma-aura-shift {
+  from {
+    opacity: .25;
+    transform: translate(-55%, -45%) rotate(-12deg) scale(.9);
+  }
+  to {
+    opacity: .8;
+    transform: translate(-45%, -55%) rotate(12deg) scale(1.15);
+  }
+}
 
-.orb-light {
+/* Вспышка при прикосновении */
+
+.luma-flash {
   position: absolute;
   z-index: 4;
-  top: 9%;
-  left: 14%;
-  width: 55%;
-  height: 25%;
+  inset: 12%;
   border-radius: 50%;
-  background: rgba(255,255,255,.8);
-  filter: blur(15px);
-  transform: rotate(-35deg);
-  animation: inner-light 6s ease-in-out infinite alternate;
+  background: radial-gradient(
+    circle,
+    rgba(255, 255, 255, .42),
+    rgba(180, 139, 255, .16) 35%,
+    transparent 70%
+  );
+  opacity: 0;
+  transform: scale(.7);
   pointer-events: none;
 }
 
-.orb-core {
-  position: absolute;
-  z-index: 2;
-  right: 5%;
-  bottom: 4%;
-  width: 85%;
-  height: 80%;
-  border-radius: 50%;
-  background:
-    radial-gradient(ellipse at 35% 35%,
-      rgba(207,173,255,.65),
-      rgba(117,70,255,.3) 35%,
-      rgba(55,123,255,.18) 60%,
-      transparent 75%);
-  filter: blur(13px);
-  animation: core-flow 8s ease-in-out infinite alternate;
+.luma-orb.is-active .luma-flash {
+  animation: luma-touch-flash .55s ease-out;
 }
 
-/* Стеклянные отражения */
-
-.orb-shine {
-  position: absolute;
-  z-index: 5;
-  inset: 0;
-  border-radius: 50%;
-  background:
-    linear-gradient(130deg,
-      transparent 30%,
-      rgba(255,255,255,.17) 43%,
-      transparent 52%);
-  animation: shine-flow 9s ease-in-out infinite alternate;
-  pointer-events: none;
-}
-
-.orb-glass-reflection {
-  position: absolute;
-  z-index: 6;
-  inset: 2px;
-  border: 1px solid rgba(255,255,255,.23);
-  border-radius: 50%;
-  box-shadow:
-    inset 5px 5px 13px rgba(255,255,255,.12),
-    inset -7px -8px 15px rgba(0,0,0,.16);
-  pointer-events: none;
-}
-
-.orb-particles {
-  position: absolute;
-  z-index: 4;
-  inset: 0;
-  border-radius: 50%;
-  background:
-    radial-gradient(circle at 23% 36%,
-      rgba(255,255,255,.95) 0 1px,transparent 2px),
-    radial-gradient(circle at 68% 27%,
-      rgba(183,222,255,.9) 0 1px,transparent 2px),
-    radial-gradient(circle at 76% 67%,
-      rgba(255,255,255,.85) 0 1px,transparent 2px),
-    radial-gradient(circle at 36% 76%,
-      rgba(206,172,255,.9) 0 1px,transparent 2px),
-    radial-gradient(circle at 53% 48%,
-      rgba(255,255,255,.75) 0 1px,transparent 2px);
-  filter: drop-shadow(0 0 5px #b58aff);
-  animation: particles-drift 8s ease-in-out infinite alternate;
-  pointer-events: none;
-}
-
-/* Свет под сферой */
-
-.orb-base-light {
-  position: absolute;
-  z-index: 1;
-  top: 205px;
-  left: 50%;
-  width: 175px;
-  height: 30px;
-  transform: translateX(-50%);
-  border-radius: 50%;
-  background: rgba(147,91,255,.72);
-  filter: blur(23px);
-  opacity: .7;
-  animation: base-glow 4s ease-in-out infinite alternate;
-}
-
-/* Футуристическая подставка */
-
-.orb-pedestal {
-  position: absolute;
-  z-index: 2;
-  top: 190px;
-  left: 50%;
-  width: 145px;
-  height: 108px;
-  transform: translateX(-50%);
-  display: flex;
-  flex-direction: column;
-  align-items: center;
-  pointer-events: none;
-}
-
-.pedestal-top {
-  position: relative;
-  z-index: 4;
-  width: 132px;
-  height: 15px;
-  border: 1px solid rgba(220,195,255,.8);
-  border-radius: 50%;
-  background:
-    linear-gradient(180deg,
-      rgba(239,225,255,.95),
-      rgba(117,83,168,.8) 45%,
-      rgba(35,22,57,.95));
-  box-shadow:
-    0 0 10px rgba(183,139,255,.7),
-    0 0 24px rgba(143,85,255,.42),
-    inset 0 2px 4px rgba(255,255,255,.65);
-}
-
-.pedestal-neck {
-  position: relative;
-  z-index: 2;
-  width: 91px;
-  height: 38px;
-  margin-top: -3px;
-  background:
-    linear-gradient(90deg,
-      #211532,
-      #8d70b8 18%,
-      #d7c5f3 35%,
-      #4d376d 55%,
-      #b49bd7 78%,
-      #211532);
-  clip-path: polygon(12% 0,88% 0,100% 100%,0 100%);
-  box-shadow: 0 0 20px rgba(157,113,255,.3);
-}
-
-.pedestal-body {
-  position: relative;
-  z-index: 3;
-  width: 126px;
-  height: 24px;
-  margin-top: -2px;
-  border: 1px solid rgba(206,174,255,.55);
-  border-radius: 10px 10px 17px 17px;
-  background:
-    linear-gradient(180deg,
-      #b9a0dc 0%,
-      #51416f 25%,
-      #21172f 65%,
-      #120d1e 100%);
-  box-shadow:
-    inset 0 2px 5px rgba(255,255,255,.42),
-    0 6px 13px rgba(0,0,0,.5),
-    0 0 15px rgba(157,113,255,.23);
-}
-
-.pedestal-bottom {
-  position: relative;
-  z-index: 4;
-  width: 145px;
-  height: 12px;
-  margin-top: -2px;
-  border: 1px solid rgba(197,166,255,.6);
-  border-radius: 50%;
-  background:
-    linear-gradient(180deg,
-      #b9a1dc,
-      #433057 55%,
-      #171020);
-  box-shadow:
-    0 4px 12px rgba(0,0,0,.45),
-    0 0 17px rgba(149,99,255,.3);
-}
-
-.pedestal-glow {
-  position: absolute;
-  z-index: 1;
-  bottom: 2px;
-  width: 120px;
-  height: 10px;
-  border-radius: 50%;
-  background: #9c65ff;
-  filter: blur(13px);
-  opacity: .8;
-}
-
-/* Анимации жидкости */
-
-@keyframes liquid-flow-one {
-  0% {
-    transform: translate(-4px,3px) rotate(-12deg) scale(1);
-    border-radius: 45% 55% 58% 42% / 48% 42% 58% 52%;
-  }
-  100% {
-    transform: translate(8px,-5px) rotate(18deg) scale(1.12);
-    border-radius: 58% 42% 42% 58% / 38% 57% 43% 62%;
-  }
-}
-
-@keyframes liquid-flow-two {
-  0% {
-    transform: translate(5px,4px) rotate(10deg) scale(.95);
-  }
-  100% {
-    transform: translate(-8px,-7px) rotate(-16deg) scale(1.12);
-  }
-}
-
-@keyframes liquid-flow-three {
-  0% {
-    transform: translate(-5px,5px) scale(.9) rotate(-8deg);
-  }
-  100% {
-    transform: translate(6px,-4px) scale(1.12) rotate(12deg);
-  }
-}
-
-@keyframes orb-breathe {
-  0%,100% { margin-top: 0; }
-  50% { margin-top: -3px; }
-}
-
-@keyframes halo-breathe {
-  from { opacity: .2; filter: blur(55px); }
-  to { opacity: .48; filter: blur(72px); }
-}
-
-@keyframes inner-light {
-  from { transform: translate(-3px,-2px) rotate(-35deg); opacity: .55; }
-  to { transform: translate(7px,5px) rotate(-25deg); opacity: 1; }
-}
-
-@keyframes core-flow {
-  from { transform: translate(-5px,2px) scale(.9); }
-  to { transform: translate(6px,-5px) scale(1.1); }
-}
-
-@keyframes shine-flow {
-  from { transform: translateX(-15%); opacity: .45; }
-  to { transform: translateX(15%); opacity: .9; }
-}
-
-@keyframes particles-drift {
-  from { transform: translate(-2px,3px); opacity: .55; }
-  to { transform: translate(3px,-4px); opacity: 1; }
-}
-
-@keyframes base-glow {
-  from { opacity: .35; transform: translateX(-50%) scale(.85); }
-  to { opacity: .8; transform: translateX(-50%) scale(1.12); }
-}
-
-/* Реакция Luma на прикосновение */
-
-.orb-wrap.orb-active .orb {
-  filter: brightness(1.25) saturate(1.3);
-  box-shadow:
-    inset 10px 9px 22px rgba(255,255,255,.5),
-    inset -15px -18px 30px rgba(8,4,24,.5),
-    0 0 35px rgba(210,170,255,.85),
-    0 0 85px rgba(143,76,255,.7),
-    0 0 125px rgba(90,126,255,.3);
-}
-
-.orb-wrap.orb-active .orb-halo {
-  opacity: .8;
-  filter: blur(78px);
-}
-
-.orb-wrap.orb-active .orb-base-light {
+.luma-orb.is-active .luma-aura {
   opacity: 1;
-  filter: blur(30px);
+  filter: blur(48px);
 }
 
-.orb-small {
-  transform: scale(.5);
-  transform-origin: center;
-  margin: -70px auto;
+.luma-orb.is-responding .luma-aura {
+  opacity: 1;
+  filter: blur(55px);
+  animation-duration: 1.5s;
 }
+
+.luma-orb.is-responding .luma-flash {
+  animation: luma-response-pulse 2s ease-in-out infinite;
+}
+
+@keyframes luma-touch-flash {
+  0% {
+    opacity: 0;
+    transform: scale(.7);
+  }
+  35% {
+    opacity: 1;
+    transform: scale(1.12);
+  }
+  100% {
+    opacity: 0;
+    transform: scale(1.35);
+  }
+}
+
+@keyframes luma-response-pulse {
+  0%, 100% { opacity: .08; transform: scale(.9); }
+  50% { opacity: .45; transform: scale(1.12); }
+}
+
+/* Компактная сфера */
+
+.luma-orb-small {
+  width: 145px;
+  height: 145px;
+  margin: 0 auto;
+}
+
+/* Сфера в голосовом разделе */
+
+.voice-orb-area {
+  position: relative;
+  overflow: hidden;
+  isolation: isolate;
+}
+
+.voice-orb-area .luma-orb {
+  transform: scale(1.12);
+}
+
+@media (max-width: 380px) {
+  .luma-orb {
+    width: 250px;
+    height: 250px;
+  }
+
+  .voice-orb-area .luma-orb {
+    transform: scale(1.02);
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .luma-orb *,
+  .home-luma::before,
+  .home-luma::after {
+    animation-duration: .01ms !important;
+    animation-iteration-count: 1 !important;
+  }
+}
+
+
 
 /* Поле сообщения на главной */
 
