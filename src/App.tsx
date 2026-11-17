@@ -1,5 +1,5 @@
 
-import { useState } from 'react';
+import { useEffect, useState } from 'react';
 import {
   AudioLines, Bot, Crown, Flame, Heart, Home, LifeBuoy,
   MessageCircle, Mic, Plus, Send, Settings, Sparkles,
@@ -8,8 +8,14 @@ import {
 } from 'lucide-react';
 
 import LumaOrb from './components/LumaOrb';
+import { supabase } from './lib/supabase';
 
 type Tab = 'home' | 'voice' | 'chats' | 'streaks' | 'support' | 'profile';
+
+type ChatMessage = {
+  role: 'user' | 'assistant';
+  content: string;
+};
 
 const navigation = [
   { id: 'home', label: 'Главная', icon: Home },
@@ -23,14 +29,144 @@ const navigation = [
 function App() {
   const [tab, setTab] = useState<Tab>('home');
   const [message, setMessage] = useState('');
-  const [messages, setMessages] = useState<string[]>([]);
-  const [orbActive, setOrbActive] = useState(false);
+  const [messages, setMessages] = useState<ChatMessage[]>([
+    {
+      role: 'assistant',
+      content: 'Привет! Рад тебя видеть. О чём поговорим сегодня?'
+    }
+  ]);
 
-  const sendMessage = () => {
-    if (!message.trim()) return;
-    setMessages((old) => [...old, message.trim()]);
+  const [orbActive, setOrbActive] = useState(false);
+  const [loading, setLoading] = useState(false);
+  const [authLoading, setAuthLoading] = useState(true);
+  const [authError, setAuthError] = useState('');
+  const [chatError, setChatError] = useState('');
+  const [chatId, setChatId] = useState<string | null>(null);
+
+  useEffect(() => {
+    let mounted = true;
+
+    const initializeAuth = async () => {
+      try {
+        const { data: sessionData, error: sessionError } =
+          await supabase.auth.getSession();
+
+        if (sessionError) throw sessionError;
+
+        if (sessionData.session) {
+          if (mounted) setAuthLoading(false);
+          return;
+        }
+
+        const { data, error } =
+          await supabase.auth.signInAnonymously();
+
+        if (error) throw error;
+
+        if (!data.session) {
+          throw new Error('Не удалось создать пользовательскую сессию.');
+        }
+
+        if (mounted) {
+          setAuthLoading(false);
+          setAuthError('');
+        }
+      } catch (error) {
+        console.error('Supabase auth error:', error);
+
+        if (mounted) {
+          setAuthError(
+            error instanceof Error
+              ? error.message
+              : 'Ошибка авторизации'
+          );
+          setAuthLoading(false);
+        }
+      }
+    };
+
+    initializeAuth();
+
+    return () => {
+      mounted = false;
+    };
+  }, []);
+
+  const sendMessage = async () => {
+    const text = message.trim();
+
+    if (!text || loading) return;
+
+    if (authLoading) {
+      setChatError('Подключаем аккаунт. Попробуй ещё раз через секунду.');
+      return;
+    }
+
+    if (authError) {
+      setChatError('Не удалось подключить аккаунт: ' + authError);
+      return;
+    }
+
     setMessage('');
+    setChatError('');
+    setMessages((old) => [
+      ...old,
+      { role: 'user', content: text }
+    ]);
     setTab('chats');
+    setLoading(true);
+    setOrbActive(true);
+
+    try {
+      const { data, error } = await supabase.functions.invoke(
+        'luma-chat',
+        {
+          body: {
+            message: text,
+            chatId: chatId
+          }
+        }
+      );
+
+      if (error) {
+        let details = error.message;
+
+        try {
+          const response = error.context as Response | undefined;
+
+          if (response) {
+            const body = await response.clone().json();
+            if (body?.error) details = body.error;
+          }
+        } catch {
+          // Оставляем исходное сообщение ошибки.
+        }
+
+        throw new Error(details || 'Не удалось получить ответ Luma.');
+      }
+
+      if (!data?.reply || !data?.chatId) {
+        throw new Error('Сервер вернул неполный ответ.');
+      }
+
+      setChatId(data.chatId);
+
+      setMessages((old) => [
+        ...old,
+        { role: 'assistant', content: data.reply }
+      ]);
+    } catch (error) {
+      console.error('Luma chat error:', error);
+
+      setChatError(
+        error instanceof Error
+          ? error.message
+          : 'Не удалось отправить сообщение.'
+      );
+    } finally {
+      setLoading(false);
+      setOrbActive(false);
+    }
   };
 
   return (
@@ -72,6 +208,7 @@ function App() {
 
               <LumaOrb
                 active={orbActive}
+                responding={loading}
                 onClick={() => setOrbActive((value) => !value)}
               />
 
@@ -85,7 +222,7 @@ function App() {
               className="home-message-box"
               onSubmit={(e) => {
                 e.preventDefault();
-                sendMessage();
+                void sendMessage();
               }}
             >
               <input
@@ -93,14 +230,20 @@ function App() {
                 onChange={(e) => setMessage(e.target.value)}
                 placeholder="Напиши что-нибудь..."
                 aria-label="Сообщение для Luma"
+                disabled={loading || authLoading}
               />
-              <button type="submit" disabled={!message.trim()}>
+              <button
+                type="submit"
+                disabled={!message.trim() || loading || authLoading}
+              >
                 <Send size={19} />
               </button>
             </form>
 
             <p className="home-hint">
-              Нажми на сферу, чтобы почувствовать её энергию
+              {loading
+                ? 'Luma думает над ответом...'
+                : 'Нажми на сферу, чтобы почувствовать её энергию'}
             </p>
           </div>
         )}
@@ -116,6 +259,7 @@ function App() {
             <div className="voice-orb-area">
               <LumaOrb
                 active={orbActive}
+                responding={loading}
                 onClick={() => setOrbActive((value) => !value)}
               />
             </div>
@@ -129,7 +273,7 @@ function App() {
               <Mic size={18} /> Голос скоро появится
             </button>
             <p className="hint">
-              Голосовой режим станет доступен после подключения сервера ИИ.
+              Голосовой режим станет доступен после отдельного подключения голосового сервера.
             </p>
           </div>
         )}
@@ -153,28 +297,60 @@ function App() {
               </div>
 
               <div className="chat-messages">
-                <div className="ai-message">
-                  Привет! Рад тебя видеть. О чём поговорим сегодня?
-                </div>
                 {messages.map((item, i) => (
-                  <div className="user-message" key={i}>{item}</div>
+                  <div
+                    className={
+                      item.role === 'user' ? 'user-message' : 'ai-message'
+                    }
+                    key={i}
+                  >
+                    {item.content}
+                  </div>
                 ))}
+
+                {loading && (
+                  <div className="ai-message">
+                    Luma печатает...
+                  </div>
+                )}
               </div>
 
-              <div className="chat-input">
+              {chatError && (
+                <p className="hint" role="alert">
+                  {chatError}
+                </p>
+              )}
+
+              <form
+                className="chat-input"
+                onSubmit={(e) => {
+                  e.preventDefault();
+                  void sendMessage();
+                }}
+              >
                 <input
                   value={message}
                   onChange={(e) => setMessage(e.target.value)}
-                  onKeyDown={(e) => e.key === 'Enter' && sendMessage()}
                   placeholder="Напиши сообщение..."
+                  disabled={loading || authLoading}
                 />
-                <button onClick={sendMessage}>
+                <button
+                  type="submit"
+                  disabled={!message.trim() || loading || authLoading}
+                >
                   <Send size={18} />
                 </button>
-              </div>
-              <p className="hint">
-                Пока сообщения отображаются локально. Для ответов ИИ нужна серверная интеграция.
-              </p>
+              </form>
+
+              {authLoading && (
+                <p className="hint">Подключаем твой аккаунт...</p>
+              )}
+
+              {authError && (
+                <p className="hint" role="alert">
+                  Ошибка авторизации: {authError}
+                </p>
+              )}
             </div>
           </div>
         )}
@@ -265,7 +441,13 @@ function App() {
             <div className="profile-card">
               <div className="profile-avatar"><UserRound size={38} /></div>
               <h2>Друг Friend AI</h2>
-              <span className="subtle">Гость · Telegram подключение ожидается</span>
+              <span className="subtle">
+                {authLoading
+                  ? 'Подключение...'
+                  : authError
+                    ? 'Ошибка подключения'
+                    : 'Гость · Анонимный аккаунт'}
+              </span>
               <div className="profile-stats">
                 <div><strong>0</strong><span>Чатов</span></div>
                 <div><strong>0</strong><span>Серий</span></div>
