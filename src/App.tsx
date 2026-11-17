@@ -1,16 +1,17 @@
 
+
 import { useEffect, useState } from 'react';
 import {
-  AudioLines, Bot, Crown, Flame, Heart, Home, LifeBuoy,
-  MessageCircle, Mic, Plus, Send, Settings, Sparkles,
-  UserRound, ChevronRight, ShieldCheck, Globe,
-  Moon, Star
+  Bot, Crown, Flame, Heart, Home, LifeBuoy,
+  MessageCircle, Mic, Plus, Send, Settings,
+  Sparkles, UserRound, ChevronRight, ShieldCheck,
+  Globe, Moon, Star, AudioLines
 } from 'lucide-react';
 
 import LumaOrb from './components/LumaOrb';
 import { supabase } from './lib/supabase';
 
-type Tab = 'home' | 'voice' | 'chats' | 'streaks' | 'support' | 'profile';
+type Tab = 'home' | 'chats' | 'streaks' | 'support' | 'profile';
 
 type ChatMessage = {
   role: 'user' | 'assistant';
@@ -19,7 +20,6 @@ type ChatMessage = {
 
 const navigation = [
   { id: 'home', label: 'Главная', icon: Home },
-  { id: 'voice', label: 'Голос', icon: AudioLines },
   { id: 'chats', label: 'Чаты', icon: MessageCircle },
   { id: 'streaks', label: 'Серии', icon: Flame },
   { id: 'support', label: 'Помощь', icon: LifeBuoy },
@@ -118,12 +118,26 @@ function App() {
     setOrbActive(true);
 
     try {
+      const { data: sessionData, error: sessionError } =
+        await supabase.auth.getSession();
+
+      if (sessionError) throw sessionError;
+
+      const token = sessionData.session?.access_token;
+
+      if (!token) {
+        throw new Error('Сессия не найдена. Перезагрузи приложение.');
+      }
+
       const { data, error } = await supabase.functions.invoke(
         'Luma-chat',
         {
+          headers: {
+            Authorization: `Bearer ${token}`
+          },
           body: {
             message: text,
-            chatId: chatId
+            chatId
           }
         }
       );
@@ -180,11 +194,18 @@ function App() {
             <Heart size={20} fill="currentColor" />
           </div>
           <div>
-            <div className="brand-name">Friend AI<span>2.0</span></div>
+            <div className="brand-name">
+              Friend AI<span>2.0</span>
+            </div>
             <div className="brand-subtitle">ТВОЁ ПРОСТРАНСТВО</div>
           </div>
         </button>
-        <button className="icon-button" onClick={() => setTab('profile')}>
+
+        <button
+          className="icon-button"
+          onClick={() => setTab('profile')}
+          aria-label="Настройки профиля"
+        >
           <Settings size={20} />
         </button>
       </header>
@@ -196,8 +217,13 @@ function App() {
               <div className="eyebrow">
                 <Sparkles size={14} /> ТВОЙ ИИ-ДРУГ
               </div>
-              <h1>Рад тебя<br /><span>видеть.</span></h1>
-              <p className="muted">Я рядом. Можешь рассказать мне всё.</p>
+              <h1>
+                Рад тебя<br />
+                <span>видеть.</span>
+              </h1>
+              <p className="muted">
+                Я рядом. Можешь рассказать мне всё.
+              </p>
             </div>
 
             <div className="home-luma">
@@ -235,6 +261,7 @@ function App() {
               <button
                 type="submit"
                 disabled={!message.trim() || loading || authLoading}
+                aria-label="Отправить сообщение"
               >
                 <Send size={19} />
               </button>
@@ -243,38 +270,33 @@ function App() {
             <p className="home-hint">
               {loading
                 ? 'Luma думает над ответом...'
-                : 'Нажми на сферу, чтобы почувствовать её энергию'}
+                : 'Напиши Luma — она тебя выслушает'}
             </p>
-          </div>
-        )}
 
-        {tab === 'voice' && (
-          <div className="page voice-page">
-            <div className="eyebrow">
-              <AudioLines size={14} /> ГОЛОСОВОЕ ОБЩЕНИЕ
+            <div className="voice-card">
+              <div className="voice-card-icon">
+                <AudioLines size={23} />
+              </div>
+
+              <div className="voice-card-content">
+                <strong>Голосовое общение</strong>
+                <span>Поговори с Luma голосом</span>
+              </div>
+
+              <button
+                className="voice-action"
+                type="button"
+                disabled
+                aria-label="Голосовое общение скоро появится"
+              >
+                <Mic size={20} />
+              </button>
+
+              <div className="voice-card-note">
+                <span className="status-dot" />
+                Скоро появится
+              </div>
             </div>
-            <h1>Поговорим<br /><span>голосом?</span></h1>
-            <p className="muted">Luma всегда готова тебя выслушать.</p>
-
-            <div className="voice-orb-area">
-              <LumaOrb
-                active={orbActive}
-                responding={loading}
-                onClick={() => setOrbActive((value) => !value)}
-              />
-            </div>
-
-            <div className="voice-status">
-              <span className="status-dot" />
-              ОЖИДАНИЕ ПОДКЛЮЧЕНИЯ
-            </div>
-
-            <button className="primary-button wide" disabled>
-              <Mic size={18} /> Голос скоро появится
-            </button>
-            <p className="hint">
-              Голосовой режим станет доступен после отдельного подключения голосового сервера.
-            </p>
           </div>
         )}
 
@@ -284,7 +306,9 @@ function App() {
               <MessageCircle size={14} /> ОБЩЕНИЕ
             </div>
             <h1>Мои <span>чаты</span></h1>
-            <p className="muted">Твоё личное пространство для разговоров.</p>
+            <p className="muted">
+              Твоё личное пространство для разговоров.
+            </p>
 
             <div className="chat-card">
               <div className="chat-heading">
@@ -368,13 +392,20 @@ function App() {
             <div className="streak-card">
               <div className="streak-glow" />
               <div className="streak-fire">
-                <Flame className="streak-flame animated-flame" size={76} fill="currentColor" />
+                <Flame
+                  className="streak-flame animated-flame"
+                  size={76}
+                  fill="currentColor"
+                />
               </div>
               <div className="streak-number">0</div>
               <div className="streak-label">ДНЕЙ ДРУЖБЫ</div>
               <div className="streak-divider" />
               <p>Твоя первая серия начинается с одного сообщения.</p>
-              <button className="primary-button" onClick={() => setTab('chats')}>
+              <button
+                className="primary-button"
+                onClick={() => setTab('chats')}
+              >
                 <Plus size={17} /> Начать общение
               </button>
             </div>
@@ -384,7 +415,7 @@ function App() {
               <div>
                 <strong>Как работают серии?</strong>
                 <p>
-                  Общайтесь с друзьями каждый день, чтобы сохранять огонёк вашей дружбы.
+                  Общайтесь каждый день, чтобы сохранять огонёк вашей дружбы.
                 </p>
               </div>
             </div>
@@ -397,27 +428,44 @@ function App() {
               <LifeBuoy size={14} /> МЫ РЯДОМ
             </div>
             <h1>Чем <span>помочь?</span></h1>
-            <p className="muted">Выбери, с чем мы можем помочь.</p>
+            <p className="muted">
+              Выбери, с чем мы можем помочь.
+            </p>
 
             <div className="support-list">
               <button className="support-item">
                 <div className="feature-icon violet"><MessageCircle /></div>
-                <div><strong>Частые вопросы</strong><span>Ответы о Friend AI</span></div>
+                <div>
+                  <strong>Частые вопросы</strong>
+                  <span>Ответы о Friend AI</span>
+                </div>
                 <ChevronRight />
               </button>
+
               <button className="support-item">
                 <div className="feature-icon blue"><Settings /></div>
-                <div><strong>Техническая поддержка</strong><span>Ошибки и проблемы приложения</span></div>
+                <div>
+                  <strong>Техническая поддержка</strong>
+                  <span>Ошибки и проблемы приложения</span>
+                </div>
                 <ChevronRight />
               </button>
+
               <button className="support-item">
                 <div className="feature-icon orange"><Heart /></div>
-                <div><strong>Связаться с создателем</strong><span>Личное обращение, совет или разговор</span></div>
+                <div>
+                  <strong>Связаться с создателем</strong>
+                  <span>Личное обращение, совет или разговор</span>
+                </div>
                 <ChevronRight />
               </button>
+
               <button className="support-item">
                 <div className="feature-icon green"><ShieldCheck /></div>
-                <div><strong>Безопасность</strong><span>Конфиденциальность и данные</span></div>
+                <div>
+                  <strong>Безопасность</strong>
+                  <span>Конфиденциальность и данные</span>
+                </div>
                 <ChevronRight />
               </button>
             </div>
@@ -425,7 +473,8 @@ function App() {
             <div className="notice-card">
               <Heart size={20} />
               <p>
-                Личное обращение направляется создателю приложения. Это не ИИ-служба и не экстренная психологическая помощь. Ответ может занять время.
+                Личное обращение направляется создателю приложения. Это не
+                экстренная психологическая помощь. Ответ может занять время.
               </p>
             </div>
           </div>
@@ -439,7 +488,9 @@ function App() {
             <h1>Мой <span>профиль</span></h1>
 
             <div className="profile-card">
-              <div className="profile-avatar"><UserRound size={38} /></div>
+              <div className="profile-avatar">
+                <UserRound size={38} />
+              </div>
               <h2>Друг Friend AI</h2>
               <span className="subtle">
                 {authLoading
@@ -455,26 +506,44 @@ function App() {
               </div>
             </div>
 
-            <div className="section-heading"><h2>Настройки</h2></div>
+            <div className="section-heading">
+              <h2>Настройки</h2>
+            </div>
+
             <div className="support-list">
               <button className="support-item">
                 <div className="feature-icon violet"><Globe /></div>
-                <div><strong>Язык</strong><span>Русский</span></div>
+                <div>
+                  <strong>Язык</strong>
+                  <span>Русский</span>
+                </div>
                 <ChevronRight />
               </button>
+
               <button className="support-item">
                 <div className="feature-icon blue"><Moon /></div>
-                <div><strong>Оформление</strong><span>Тёмная тема</span></div>
+                <div>
+                  <strong>Оформление</strong>
+                  <span>Тёмная тема</span>
+                </div>
                 <ChevronRight />
               </button>
+
               <button className="support-item">
                 <div className="feature-icon orange"><Crown /></div>
-                <div><strong>Friend AI Premium</strong><span>Расширенные возможности</span></div>
+                <div>
+                  <strong>Friend AI Premium</strong>
+                  <span>Расширенные возможности</span>
+                </div>
                 <ChevronRight />
               </button>
+
               <button className="support-item">
                 <div className="feature-icon green"><ShieldCheck /></div>
-                <div><strong>Конфиденциальность</strong><span>Управление данными</span></div>
+                <div>
+                  <strong>Конфиденциальность</strong>
+                  <span>Управление данными</span>
+                </div>
                 <ChevronRight />
               </button>
             </div>
