@@ -39,14 +39,26 @@ function Orb({
       aria-label={onClick ? 'Активировать Luma' : undefined}
     >
       <div className="orb-halo" />
+
       <div className="orb">
+        <div className="orb-liquid orb-liquid-one" />
+        <div className="orb-liquid orb-liquid-two" />
+        <div className="orb-liquid orb-liquid-three" />
         <div className="orb-light" />
         <div className="orb-core" />
         <div className="orb-shine" />
+        <div className="orb-glass-reflection" />
+        <div className="orb-particles" />
       </div>
-      <div className="orb-ring" />
-      <div className="orb-ring orb-ring-two" />
-      <div className="orb-particles" />
+
+      <div className="orb-base-light" />
+      <div className="orb-pedestal">
+        <div className="pedestal-top" />
+        <div className="pedestal-neck" />
+        <div className="pedestal-body" />
+        <div className="pedestal-bottom" />
+        <div className="pedestal-glow" />
+      </div>
     </div>
   );
 }
